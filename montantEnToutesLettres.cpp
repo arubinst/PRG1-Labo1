@@ -1,5 +1,7 @@
 #include "montantEnToutesLettres.h"
 
+
+//# TODO : ask if okay to use English as their func are named in french
 using namespace std;
 
 string convertUnit(int unit);
@@ -56,7 +58,7 @@ string convertTens(int tens) {
 }
 
 string tensToText(int smallInt) {
-//    1-99
+//    0-99
     if (smallInt < 10) {
         return convertUnit(smallInt);
     } else if (smallInt <= 17) {
@@ -74,7 +76,24 @@ string tensToText(int smallInt) {
     }
 }
 
+string hundredsToText(int hundred) {
+//    0-999
+    int quotient = hundred / 100;
+    int rest = hundred % 100;
+
+    if (quotient == 0) {
+        return tensToText(hundred);
+    }
+
+    string cent = (quotient > 1 && rest == 0 ? "cents" : "cent");
+    string tens = (rest == 0 ? "" : "-" + tensToText(rest));
+    if (quotient == 1) {
+        return cent + tens;
+    } else {
+        return convertUnit(quotient) + "-" + cent + tens;
+    }
+}
+
 string montantEnToutesLettres(long double montant) {
-    return tensToText(montant);
     return "zero franc"s;
 }
