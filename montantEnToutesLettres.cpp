@@ -1,8 +1,15 @@
 #include "montantEnToutesLettres.h"
+#include <iostream>
+#include <cmath>
 
 
 //# TODO : ask if okay to use English as their func are named in french
 using namespace std;
+
+
+long double roundFractional(long double montant);
+
+long separator(long double montant, bool decimalOrFractional);
 
 string convertUnit(int unit);
 
@@ -94,6 +101,35 @@ string hundredsToText(int hundred) {
     }
 }
 
+//--ROUNDING FUNCIONS ------------------------------------------------
+long double roundFractional(long double montant){
+    long double x = round(montant * 100) / 100;
+    x = round(montant * 100) / 100;
+    return x ;
+}
+
+//---------------------------------------------------------------------
+
+//--SEPARATION OF THE DECIMAL AND FRACTIONAL --------------------------
+long int separator(long double montant, bool decimalOrFractional){
+    // Fractional == False,  Decimal == True
+    double decimalPart;
+    double fractionalPart = modf(montant, &decimalPart);
+
+    if(decimalOrFractional){
+        return decimalPart;
+    }else {
+        fractionalPart = roundFractional(fractionalPart);//added for fix rounding error of c++
+        fractionalPart *= 100;
+        return fractionalPart;
+    }
+}
+
+//---------------------------------------------------------------------
+
+
+
+
 string montantEnToutesLettres(long double montant) {
-    return "zero franc"s;
+  return "zero franc"s;
 }
