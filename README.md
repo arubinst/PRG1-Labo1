@@ -50,4 +50,4 @@ un switch pour un résultat similaire.
 
 Le rendu doit être fait avant le jeudi 12.10.2023 au soir, à 23:59. Sur votre repo github, indiquez une 'release' en cliquant sur 'Create a new release' dans la barre de navigation droite du repo. Utilisez le tag `rendu` qui pointe sur votre dernier commit - c'est celui-ci qui sera corrigé. Les commits effectués après celui-ci seront ignorés.
 
-N'oubliez pas de rendre votre repo privé et d'ajouter comme collaborateur `edwardransome` et `arubinst`. 
+Le rendu (vos noms et l'URL du repo) s'effectue sur Teams.
