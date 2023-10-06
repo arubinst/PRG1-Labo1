@@ -6,9 +6,9 @@ string convertUnit(int unit);
 
 string convertSpecial(int special);
 
-string convertTen(int ten);
+string convertTens(int tens);
 
-string smallIntToText(int smallInt);
+string tensToText(int smallInt);
 
 
 string convertUnit(int unit) {
@@ -40,8 +40,8 @@ string convertSpecial(int special) {
     }
 }
 
-string convertTen(int ten) {
-    switch (ten) {
+string convertTens(int tens) {
+    switch (tens) {
         case 1:return "dix";
         case 2:return "vingt";
         case 3:return "trente";
@@ -55,8 +55,8 @@ string convertTen(int ten) {
     }
 }
 
-string smallIntToText(int smallInt) {
-//    0-99
+string tensToText(int smallInt) {
+//    1-99
     if (smallInt < 10) {
         return convertUnit(smallInt);
     } else if (smallInt <= 17) {
@@ -67,14 +67,14 @@ string smallIntToText(int smallInt) {
     int rest = smallInt % 10;
 
     if (rest == 0) {
-        return convertTen(quotient);
+        return convertTens(quotient);
     } else {
         string separator = (rest == 1 ? " et " : "-");
-        return convertTen(quotient) + separator + smallIntToText(rest);
+        return convertTens(quotient) + separator + tensToText(rest);
     }
 }
 
 string montantEnToutesLettres(long double montant) {
-    return smallIntToText(montant);
+    return tensToText(montant);
     return "zero franc"s;
 }
