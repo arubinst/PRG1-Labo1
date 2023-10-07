@@ -1,5 +1,4 @@
 #include "montantEnToutesLettres.h"
-#include <iostream>
 #include <cmath>
 
 
@@ -19,48 +18,85 @@ string convertTens(int tens);
 
 string tensToText(int smallInt);
 
+string agregator(long int decimal, long int fractional);
+
+string numbersToLetters(long int number);
+
+string tensPowChecker(int number);
+
+string numbersChunk(long int &number, long int comparator, string denominaotor);
+
 
 string convertUnit(int unit) {
     switch (unit) {
-        case 0:return "zero";
-        case 1:return "un";
-        case 2:return "deux";
-        case 3:return "trois";
-        case 4:return "quatre";
-        case 5:return "cinq";
-        case 6:return "six";
-        case 7:return "sept";
-        case 8:return "huit";
-        case 9:return "neuf";
-        default:return "";
+        case 0:
+            return "zero";
+        case 1:
+            return "un";
+        case 2:
+            return "deux";
+        case 3:
+            return "trois";
+        case 4:
+            return "quatre";
+        case 5:
+            return "cinq";
+        case 6:
+            return "six";
+        case 7:
+            return "sept";
+        case 8:
+            return "huit";
+        case 9:
+            return "neuf";
+        default:
+            return "";
     }
 }
 
 string convertSpecial(int special) {
     switch (special) {
-        case 10: return "dix"; // FIXME : dix already in convertTen, remove one
-        case 11:return "onze";
-        case 12:return "douze";
-        case 13:return "treize";
-        case 14:return "quatorze";
-        case 15:return "quinze";
-        case 16:return "seize";
-        default:return "";
+        case 10:
+            return "dix"; // FIXME : dix already in convertTen, remove one
+        case 11:
+            return "onze";
+        case 12:
+            return "douze";
+        case 13:
+            return "treize";
+        case 14:
+            return "quatorze";
+        case 15:
+            return "quinze";
+        case 16:
+            return "seize";
+        default:
+            return "";
     }
 }
 
 string convertTens(int tens) {
     switch (tens) {
-        case 1:return "dix";
-        case 2:return "vingt";
-        case 3:return "trente";
-        case 4:return "quarante";
-        case 5:return "cinquante";
-        case 6:return "soixante";
-        case 7:return "septante";
-        case 8:return "huitante";
-        case 9:return "nonante";
-        default:return "";
+        case 1:
+            return "dix";
+        case 2:
+            return "vingt";
+        case 3:
+            return "trente";
+        case 4:
+            return "quarante";
+        case 5:
+            return "cinquante";
+        case 6:
+            return "soixante";
+        case 7:
+            return "septante";
+        case 8:
+            return "huitante";
+        case 9:
+            return "nonante";
+        default:
+            return "";
     }
 }
 
@@ -101,35 +137,86 @@ string hundredsToText(int hundred) {
     }
 }
 
-//--ROUNDING FUNCIONS ------------------------------------------------
-long double roundFractional(long double montant){
-    long double x = round(montant * 100) / 100;
-    x = round(montant * 100) / 100;
-    return x ;
+
+string numbersChunk(long int &number, long int comparator, string denominaotor) {
+
+    long int temp;
+    string result;
+
+    if (number >= comparator) {
+
+        temp = number / comparator;
+        result += tensPowChecker(temp);
+        temp *= comparator;
+        result += denominaotor;
+        result += (temp - number == 0 ? "" : "-");
+        number -= temp;
+    }
+    return result;
 }
 
-//---------------------------------------------------------------------
+string numbersToLetters(long int number) {
 
-//--SEPARATION OF THE DECIMAL AND FRACTIONAL --------------------------
-long int separator(long double montant, bool decimalOrFractional){
+    string result;
+    result += numbersChunk(number, 1'000'000'000, "-milliard");
+    result += numbersChunk(number, 1'000'000, "-million");
+    result += numbersChunk(number, 1'000, "-mille");
+    result += hundredsToText(number);
+
+    return result;
+}
+
+string tensPowChecker(int number) {
+
+    if (number <= 99)
+        return tensToText(number);
+
+    if (number <= 999)
+        return hundredsToText(number);
+    return "error at tensPowChecker";
+}
+
+string agregator(long int decimal, long int fractional) {
+
+    string result;
+    string beforeComma = numbersToLetters(decimal);
+    string afterComma = numbersToLetters(fractional);
+
+
+    if (fractional == 0)
+        return beforeComma + " francs";
+
+    if (decimal == 0)
+        return afterComma + " centimes";
+
+    return beforeComma + " francs et " + afterComma + " centimes";
+}
+
+long double roundFractional(long double montant) {
+
+    return round(montant * 100) / 100;
+}
+
+
+long int separator(long double montant, bool decimalOrFractional) {
     // Fractional == False,  Decimal == True
-    double decimalPart;
-    double fractionalPart = modf(montant, &decimalPart);
+    long double decimalPart;
+    long double fractionalPart = modf(montant, &decimalPart);
 
-    if(decimalOrFractional){
+    if (decimalOrFractional) {
         return decimalPart;
-    }else {
+    } else {
         fractionalPart = roundFractional(fractionalPart);//added for fix rounding error of c++
         fractionalPart *= 100;
         return fractionalPart;
     }
 }
 
-//---------------------------------------------------------------------
 
-
+//TODO CHECK IF THE VALUE INPUTED IS CORRECT
 
 
 string montantEnToutesLettres(long double montant) {
-  return "zero franc"s;
+
+    return agregator(separator(montant, true), separator(montant, false));
 }
