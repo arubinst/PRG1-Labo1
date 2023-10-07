@@ -114,7 +114,7 @@ string tensToText(int smallInt) {
     if (rest == 0) {
         return convertTens(quotient);
     } else {
-        string separator = (rest == 1 ? " et " : "-");
+        string separator = (rest == 1 ? "-et-" : "-");
         return convertTens(quotient) + separator + tensToText(rest);
     }
 }
@@ -182,7 +182,7 @@ string agregator(long int decimal, long int fractional) {
     string beforeComma = numbersToLetters(decimal);
     string afterComma = numbersToLetters(fractional);
 
-
+//TODO LOGIC WRONG
     if (fractional == 0)
         return beforeComma + " francs";
 
