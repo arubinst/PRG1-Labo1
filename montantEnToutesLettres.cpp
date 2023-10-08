@@ -183,31 +183,9 @@ string agregator(long int decimal, long int fractional) {
     string afterComma = numbersToLetters(fractional);
 
     if (fractional == 0) {
-        if (decimal <= 1)
-            return beforeComma + " franc";
-        if (decimal > 1)
-            return beforeComma + " francs";
-    }
-
-    if (decimal == 0){
-        if (fractional<=1)
-            return afterComma + " centime";
-        if (fractional>1)
-            return afterComma + " centimes";
-    }
-
-    if (decimal>1){
-        if (fractional<=1)
-            return beforeComma + " francs et " + afterComma + " centime";
-        if (fractional>1)
-            return beforeComma + " francs et " + afterComma + " centimes";
-    }
-
-    if (decimal<=1){
-        if (fractional<=1)
-            return beforeComma + " franc et " + afterComma + " centime";
-        if (fractional>1)
-            return beforeComma + " franc et " + afterComma + " centimes";
+        return beforeComma + (decimal <= 1 ? " franc" : " francs");
+    } else {
+        return beforeComma + (decimal <= 1 ? " franc et " : " francs et ") + afterComma + (fractional <= 1 ? " centime" : " centimes");
     }
     return "ERROR";
 }
