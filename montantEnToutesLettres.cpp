@@ -8,7 +8,7 @@ using namespace std;
 
 long double roundFractional(long double montant);
 
-long separator(long double montant, bool decimalOrFractional);
+long long separator(long double montant, bool decimalOrFractional);
 
 string convertUnit(int unit);
 
@@ -20,9 +20,9 @@ string tensToText(int smallInt);
 
 string hundredsToText(int hundred, bool mille_after);  //# FIXME : better to set default val here or en bas ?
 
-string numberToText(long int number);
+string numberToText(long long int number);
 
-string agregator(long int decimal, long int fractional);
+string agregator(long long int decimal, long int fractional);
 
 string numbersToLetters(long int number);
 
@@ -134,7 +134,7 @@ const int one_billion = 1e9,
         one_million = 1e6,
         one_thousand = 1e3;
 
-string numberToText(long int number) {
+string numberToText(long long int number) {
     string number_text;
 
     int order = number / one_billion;
@@ -185,7 +185,7 @@ string numberToText(long int number) {
 //    return "error at tensPowChecker";
 //}
 
-string agregator(long int decimal, long int fractional) {
+string agregator(long long int decimal, long int fractional) {
 
     string result;
     string beforeComma = numberToText(decimal);
@@ -208,13 +208,13 @@ long double roundFractional(long double montant) {
 }
 
 
-long int separator(long double montant, bool decimalOrFractional) {
+long long int separator(long double montant, bool decimalOrFractional) {
     // Fractional == False,  Decimal == True
     long double decimalPart;
     long double fractionalPart = modf(roundFractional(montant), &decimalPart);
 
     if (decimalOrFractional) {
-        return decimalPart;
+        return static_cast<long long int>(decimalPart);
     } else {
         fractionalPart = roundFractional(fractionalPart);//added for fix rounding error of c++
         fractionalPart *= 100;
