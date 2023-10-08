@@ -1,6 +1,5 @@
 #include "montantEnToutesLettres.h"
 #include <cmath>
-#include <iostream>
 
 //# TODO : ask if okay to use English as their func are named in french
 using namespace std;
@@ -18,60 +17,85 @@ string convertTens(int tens);
 
 string tensToText(int smallInt);
 
-string hundredsToText(int hundred, bool mille_after);  //# FIXME : better to set default val here or en bas ?
+string hundredsToText(int hundred, bool mille_after);
 
 string numberToText(long long int number);
 
 string agregator(long long int decimal, long int fractional);
 
-string numbersToLetters(long int number);
-
-string tensPowChecker(int number);
-
-string numbersChunk(long int& number, long int comparator, string denominaotor);
+string isNumberInRange(long double montant);
 
 
 string convertUnit(int unit) {
     switch (unit) {
-        case 0:return "zero";
-        case 1:return "un";
-        case 2:return "deux";
-        case 3:return "trois";
-        case 4:return "quatre";
-        case 5:return "cinq";
-        case 6:return "six";
-        case 7:return "sept";
-        case 8:return "huit";
-        case 9:return "neuf";
-        default:return "";
+        case 0:
+            return "zero";
+        case 1:
+            return "un";
+        case 2:
+            return "deux";
+        case 3:
+            return "trois";
+        case 4:
+            return "quatre";
+        case 5:
+            return "cinq";
+        case 6:
+            return "six";
+        case 7:
+            return "sept";
+        case 8:
+            return "huit";
+        case 9:
+            return "neuf";
+        default:
+            return "";
     }
 }
 
 string convertSpecial(int special) {
     switch (special) {
-        case 10:return "dix"; // FIXME : dix already in convertTen, remove one
-        case 11:return "onze";
-        case 12:return "douze";
-        case 13:return "treize";
-        case 14:return "quatorze";
-        case 15:return "quinze";
-        case 16:return "seize";
-        default:return "";
+        case 10:
+            return "dix";
+        case 11:
+            return "onze";
+        case 12:
+            return "douze";
+        case 13:
+            return "treize";
+        case 14:
+            return "quatorze";
+        case 15:
+            return "quinze";
+        case 16:
+            return "seize";
+        default:
+            return "";
     }
 }
 
 string convertTens(int tens) {
     switch (tens) {
-        case 1:return "dix";
-        case 2:return "vingt";
-        case 3:return "trente";
-        case 4:return "quarante";
-        case 5:return "cinquante";
-        case 6:return "soixante";
-        case 7:return "septante";
-        case 8:return "huitante";
-        case 9:return "nonante";
-        default:return "";
+        case 1:
+            return "dix";
+        case 2:
+            return "vingt";
+        case 3:
+            return "trente";
+        case 4:
+            return "quarante";
+        case 5:
+            return "cinquante";
+        case 6:
+            return "soixante";
+        case 7:
+            return "septante";
+        case 8:
+            return "huitante";
+        case 9:
+            return "nonante";
+        default:
+            return "";
     }
 }
 
@@ -112,24 +136,6 @@ string hundredsToText(int hundred, bool mille_after = false) {
     }
 }
 
-
-//string numbersChunk(long int& number, long int comparator, string denominaotor) {
-//
-//    long int temp;
-//    string result;
-//
-//    if (number >= comparator) {
-//
-//        temp = number / comparator;
-//        result += tensPowChecker(temp);
-//        temp *= comparator;
-//        result += denominaotor;
-//        result += (temp - number == 0 ? "" : "-");
-//        number -= temp;
-//    }
-//    return result;
-//}
-
 const int one_billion = 1e9,
         one_million = 1e6,
         one_thousand = 1e3;
@@ -163,27 +169,6 @@ string numberToText(long long int number) {
 
     return number_text;
 }
-
-//string numbersToLetters(long int number) {
-//
-//    string result;
-//    result += numbersChunk(number, 1'000'000'000, "-milliard");
-//    result += numbersChunk(number, 1'000'000, "-million");
-//    result += numbersChunk(number, 1'000, "-mille");
-//    result += hundredsToText(number);
-//
-//    return result;
-//}
-//
-//string tensPowChecker(int number) {
-//
-//    if (number <= 99)
-//        return tensToText(number);
-//
-//    if (number <= 999)
-//        return hundredsToText(number);
-//    return "error at tensPowChecker";
-//}
 
 string agregator(long long int decimal, long int fractional) {
 
@@ -223,23 +208,21 @@ long long int separator(long double montant, bool decimalOrFractional) {
 }
 
 
-//TODO CHECK IF THE VALUE INPUTED IS CORRECT
-
 string isNumberInRange(long double montant) {
     string flag;
     if (montant < 0) {
         flag = "erreur : montant negatif";
     } else if (montant > 999'999'999'999.99) {
         flag = "erreur : montant trop grand";
-    }else{
-        flag="";
+    } else {
+        flag = "";
     }
     return flag;
 }
 
 
 string montantEnToutesLettres(long double montant) {
-    if (isNumberInRange(montant)!= "") {
+    if (isNumberInRange(montant) != "") {
         return isNumberInRange(montant);
     }
     return agregator(separator(montant, true), separator(montant, false));
