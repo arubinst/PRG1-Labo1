@@ -113,22 +113,22 @@ string hundredsToText(int hundred, bool mille_after = false) {
 }
 
 
-string numbersChunk(long int& number, long int comparator, string denominaotor) {
-
-    long int temp;
-    string result;
-
-    if (number >= comparator) {
-
-        temp = number / comparator;
-        result += tensPowChecker(temp);
-        temp *= comparator;
-        result += denominaotor;
-        result += (temp - number == 0 ? "" : "-");
-        number -= temp;
-    }
-    return result;
-}
+//string numbersChunk(long int& number, long int comparator, string denominaotor) {
+//
+//    long int temp;
+//    string result;
+//
+//    if (number >= comparator) {
+//
+//        temp = number / comparator;
+//        result += tensPowChecker(temp);
+//        temp *= comparator;
+//        result += denominaotor;
+//        result += (temp - number == 0 ? "" : "-");
+//        number -= temp;
+//    }
+//    return result;
+//}
 
 const int one_billion = 1e9,
         one_million = 1e6,
@@ -157,7 +157,7 @@ string numberToText(long int number) {
         number_text += hundredsToText(order, true) + "-mille" + (rest != 0 ? "-" : "");
     }
 
-    if (rest >= 1) {
+    if (rest >= 1 or number == 0) {
         number_text += hundredsToText(rest);
     }
 
@@ -174,16 +174,16 @@ string numberToText(long int number) {
 //
 //    return result;
 //}
-
-string tensPowChecker(int number) {
-
-    if (number <= 99)
-        return tensToText(number);
-
-    if (number <= 999)
-        return hundredsToText(number);
-    return "error at tensPowChecker";
-}
+//
+//string tensPowChecker(int number) {
+//
+//    if (number <= 99)
+//        return tensToText(number);
+//
+//    if (number <= 999)
+//        return hundredsToText(number);
+//    return "error at tensPowChecker";
+//}
 
 string agregator(long int decimal, long int fractional) {
 
@@ -193,6 +193,8 @@ string agregator(long int decimal, long int fractional) {
 
     if (fractional == 0) {
         return beforeComma + (decimal <= 1 ? " franc" : " francs");
+    } else if (decimal == 0) {
+        return afterComma + (fractional <= 1 ? " centime" : " centimes");
     } else {
         return beforeComma + (decimal <= 1 ? " franc et " : " francs et ") + afterComma +
                (fractional <= 1 ? " centime" : " centimes");
