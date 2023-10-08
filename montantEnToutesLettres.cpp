@@ -79,7 +79,7 @@ string tensToText(int smallInt) {
 //    0-99
     if (smallInt < 10) {
         return convertUnit(smallInt);
-    } else if (smallInt <= 17) {
+    } else if (smallInt <= 16) {
         return convertSpecial(smallInt);
     }
 
