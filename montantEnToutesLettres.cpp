@@ -182,14 +182,34 @@ string agregator(long int decimal, long int fractional) {
     string beforeComma = numbersToLetters(decimal);
     string afterComma = numbersToLetters(fractional);
 
-//TODO LOGIC WRONG
-    if (fractional == 0)
-        return beforeComma + " francs";
+    if (fractional == 0) {
+        if (decimal <= 1)
+            return beforeComma + " franc";
+        if (decimal > 1)
+            return beforeComma + " francs";
+    }
 
-    if (decimal == 0)
-        return afterComma + " centimes";
+    if (decimal == 0){
+        if (fractional<=1)
+            return afterComma + " centime";
+        if (fractional>1)
+            return afterComma + " centimes";
+    }
 
-    return beforeComma + " francs et " + afterComma + " centimes";
+    if (decimal>1){
+        if (fractional<=1)
+            return beforeComma + " francs et " + afterComma + " centime";
+        if (fractional>1)
+            return beforeComma + " francs et " + afterComma + " centimes";
+    }
+
+    if (decimal<=1){
+        if (fractional<=1)
+            return beforeComma + " franc et " + afterComma + " centime";
+        if (fractional>1)
+            return beforeComma + " franc et " + afterComma + " centimes";
+    }
+    return "ERROR";
 }
 
 long double roundFractional(long double montant) {
@@ -201,7 +221,7 @@ long double roundFractional(long double montant) {
 long int separator(long double montant, bool decimalOrFractional) {
     // Fractional == False,  Decimal == True
     long double decimalPart;
-    long double fractionalPart = modf(montant, &decimalPart);
+    long double fractionalPart = modf(roundFractional(montant), &decimalPart);
 
     if (decimalOrFractional) {
         return decimalPart;
