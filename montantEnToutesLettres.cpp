@@ -225,22 +225,22 @@ long long int separator(long double montant, bool decimalOrFractional) {
 
 //TODO CHECK IF THE VALUE INPUTED IS CORRECT
 
-bool isNumberInRange(long double montant) {
-    bool flag = true;
+string isNumberInRange(long double montant) {
+    string flag;
     if (montant < 0) {
-        cout << "erreur : montant negatif" << endl;
-        flag = false;
+        flag = "erreur : montant negatif";
     } else if (montant > 999'999'999'999.99) {
-        cout << "erreur : montant trop grand" << endl;
-        flag = false;
+        flag = "erreur : montant trop grand";
+    }else{
+        flag="";
     }
     return flag;
 }
 
 
 string montantEnToutesLettres(long double montant) {
-    if (!isNumberInRange(montant)) {
-        return "";
+    if (isNumberInRange(montant)!= "") {
+        return isNumberInRange(montant);
     }
     return agregator(separator(montant, true), separator(montant, false));
 }
