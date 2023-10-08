@@ -1,6 +1,6 @@
 #include "montantEnToutesLettres.h"
 #include <cmath>
-
+#include <iostream>
 
 //# TODO : ask if okay to use English as their func are named in french
 using namespace std;
@@ -225,8 +225,22 @@ long long int separator(long double montant, bool decimalOrFractional) {
 
 //TODO CHECK IF THE VALUE INPUTED IS CORRECT
 
+bool isNumberInRange(long double montant) {
+    bool flag = true;
+    if (montant < 0) {
+        cout << "erreur : montant negatif" << endl;
+        flag = false;
+    } else if (montant > 999'999'999'999.99) {
+        cout << "erreur : montant trop grand" << endl;
+        flag = false;
+    }
+    return flag;
+}
+
 
 string montantEnToutesLettres(long double montant) {
-
+    if (!isNumberInRange(montant)) {
+        return "";
+    }
     return agregator(separator(montant, true), separator(montant, false));
 }
