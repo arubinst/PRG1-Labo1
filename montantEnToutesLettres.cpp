@@ -140,13 +140,13 @@ string numberToText(long long int number) {
     int order = number / one_billion;
     long int rest = number - order * one_billion;
     if (order >= 1) {
-        number_text += hundredsToText(order) + "-milliard" + (order > 1 ? "s" : "") + (rest != 0 ? "-" : "");
+        number_text += hundredsToText(order) + "-milliard" + (order > 1 ? "s" : "") + (rest != 0 ? "-" : " de ");
     }
 
     order = rest / one_million;
     rest -= order * one_million;
     if (order >= 1) {
-        number_text += hundredsToText(order) + "-million" + (order > 1 ? "s" : "") + (rest != 0 ? "-" : "");
+        number_text += hundredsToText(order) + "-million" + (order > 1 ? "s" : "") + (rest != 0 ? "-" : " de ");
     }
 
     order = rest / one_thousand;
