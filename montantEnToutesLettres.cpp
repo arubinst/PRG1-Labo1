@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string>
 #include <cmath>
 
@@ -82,22 +81,19 @@ string dozen(int number) {
 // Fonction transformant la valeur numérique en texte
 string convertSmallNumber(long double num) {
     int integerPart = (int) num;
-    // int decimalPart = floor((num - integerPart) * 100 + 0.5);
+    int quotient = integerPart / 10;
+    int rest = integerPart % 10;
     string result;
 
-    if (integerPart == 0) {
-        result += "zero ";
-    }
-
-    if (integerPart < 10) {
+    if (integerPart == 0.00) {
+        result += "zero";
+    } else if (integerPart < 10) {
         return result += unity(integerPart);
     } else if (integerPart < 17) {
         return result += dozenExeptions(integerPart);
     }
-    int quotient = integerPart / 10;
-    int rest = integerPart % 10;
     if (rest == 0) {
-        result += dozen(quotient) + " ";
+        result += dozen(quotient);
     } else {
         if (rest == 1) {
             result += dozen(quotient) + "-et-" + unity(rest);
@@ -105,32 +101,26 @@ string convertSmallNumber(long double num) {
             result += dozen(quotient) + "-" + unity(rest);
         }
     }
-
-    /*if (decimalPart > 0) {
-        result += "et ";
-        result += dozen(decimalPart / 10);
-        result += unity(decimalPart % 10);
-    }
-     */
-
     return result;
 }
 
 string convertHundredNumber(long double num) {
     int integerPart = (int) num;
+    int quotient = integerPart / 100;
+    int rest = integerPart % 100;
     string result;
 
     if ((integerPart >= 100) && (integerPart < 1000)) {
-        int quotient = integerPart / 100;
-        int rest = integerPart % 100;
-        if (integerPart >= 100 && integerPart < 110) {
-            result += "cent-" + unity(rest);
-        } else if (integerPart >= 110 && integerPart < 200) {
-            result += "cent-" + convertSmallNumber(rest);
+        if ((quotient == 1) && (rest == 0)) {
+            result += "cent";
         } else if ((quotient > 1) && (rest == 0)) {
-            result += unity(quotient) + "-cents ";
+            result += convertSmallNumber(quotient) + "-cents";
+        } else if ((quotient == 1) && (rest < 10)) {
+            result += "cent-" + convertSmallNumber(rest);
+        } else if ((quotient == 1) && (rest >= 10) && (rest < 100)) {
+            result += "cent-" + convertSmallNumber(rest);
         } else {
-            result += unity(quotient) + "-cents-" + convertSmallNumber(rest);
+            result += convertSmallNumber(quotient) + "-cents-" + convertSmallNumber(rest);
         }
     }
     return result;
@@ -139,19 +129,59 @@ string convertHundredNumber(long double num) {
 string convertThousandNumber(long double num) {
     int integerPart = (int) num;
     string result;
-    if ((integerPart >= 1000) && (integerPart < 1000000)) {
+    int quotient = integerPart / 1e9;
+    int rest = integerPart % 1000000000;
+    if ((integerPart >= 1000) && (integerPart < 1e6)) {
         int quotient = integerPart / 1000;
         int rest = integerPart % 1000;
-        if (integerPart >= 1000 && integerPart < 1010) {
-            result += "mille-" + unity(rest);
-        } else if (integerPart >= 1000 && integerPart < 2000) {
-            result += "mille-" + convertSmallNumber(rest) + " " + convertHundredNumber(rest);
-        } else if ((quotient > 1) && (rest == 0)) {
-            result += unity(quotient) + "-mille ";
-        } else {
-            result += unity(quotient) + "-mille-" + convertHundredNumber(rest) + convertSmallNumber(rest);
+        if ((integerPart >= 1000) && (integerPart < 1e4)) {
+            quotient = integerPart / 1000;
+            rest = integerPart % 1000;
+            if ((quotient == 1) && (rest == 0)) {
+                result += "mille";
+            } else if ((quotient == 1) && (rest < 10)) {
+                result += "mille-" + convertSmallNumber(rest);
+            } else if ((quotient == 1) && (rest < 100)) {
+                result += "mille-" + convertSmallNumber(rest);
+            } else if ((quotient == 1) && (rest < 1000)) {
+                result += "mille-" + convertHundredNumber(rest);
+            } else if ((quotient > 1) && (rest == 0)) {
+                result += convertSmallNumber(quotient) + "-mille";
+            } else {
+                result += convertSmallNumber(quotient) + "-mille-" + convertHundredNumber(rest);
+            }
+        } else if ((integerPart >= 1e4) && (integerPart < 1e5)) {
+            result += convertSmallNumber(quotient) + "-mille-" + convertHundredNumber(rest);
+        } else if ((integerPart >= 1e5) && (integerPart < 1e6)) {
+            result += convertHundredNumber(quotient) + "-mille-" + convertHundredNumber(rest);
+        }
+    } else if ((integerPart >= 1e6) && (integerPart < 1e9)) {
+        int quotient = integerPart / 1e6;
+        int rest = integerPart % 1000000;
+        if ((integerPart >= 1e6) && (integerPart < 1e8)) {
+            result += convertSmallNumber(quotient) + "-millions-" + convertThousandNumber(rest);
+        } else if ((integerPart >= 1e8) && (integerPart < 1e9)) {
+            result += convertHundredNumber(quotient) + "-millions-" + convertThousandNumber(rest);
+        }
+    } else {
+        if ((integerPart >= 1e9) && (integerPart < 1e10)) {
+            result += convertSmallNumber(quotient) + "-milliards-" + convertThousandNumber(rest);
         }
     }
+    return result;
+}
+
+string convertDecimal(long double num) {
+    int integerPart = (int) num;
+    int decimalPart = floor((num - integerPart) * 100 + 0.5);
+    string result;
+
+    if (decimalPart > 0) {
+        result += "et ";
+        result += dozen(decimalPart / 10);
+        result += unity(decimalPart % 10);
+    }
+
     return result;
 }
 
