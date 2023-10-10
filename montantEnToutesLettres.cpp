@@ -85,9 +85,7 @@ string convertSmallNumber(long double num) {
     int rest = integerPart % 10;
     string result;
 
-    if (integerPart == 0.00) {
-        result += "zero";
-    } else if (integerPart < 10) {
+    if (integerPart < 10) {
         return result += unity(integerPart);
     } else if (integerPart < 17) {
         return result += dozenExeptions(integerPart);
@@ -120,14 +118,14 @@ string convertHundredNumber(long double num) {
         } else if ((quotient == 1) && (rest >= 10) && (rest < 100)) {
             result += "cent-" + convertSmallNumber(rest);
         } else {
-            result += convertSmallNumber(quotient) + "-cents-" + convertSmallNumber(rest);
+            result += convertSmallNumber(quotient) + "-cent-" + convertSmallNumber(rest);
         }
     }
     return result;
 }
 
 string convertThousandNumber(long double num) {
-    int integerPart = (int) num;
+    long int integerPart = (long int) num;
     string result;
     int quotient = integerPart / 1e9;
     int rest = integerPart % 1000000000;
@@ -146,45 +144,109 @@ string convertThousandNumber(long double num) {
             } else if ((quotient == 1) && (rest < 1000)) {
                 result += "mille-" + convertHundredNumber(rest);
             } else if ((quotient > 1) && (rest == 0)) {
-                result += convertSmallNumber(quotient) + "-mille";
+                result += convertSmallNumber(quotient) + "-milles";
+            } else if ((quotient > 1) && (rest < 100)) {
+                result += convertSmallNumber(quotient) + "-mille-" + convertSmallNumber(rest);
             } else {
                 result += convertSmallNumber(quotient) + "-mille-" + convertHundredNumber(rest);
             }
         } else if ((integerPart >= 1e4) && (integerPart < 1e5)) {
-            result += convertSmallNumber(quotient) + "-mille-" + convertHundredNumber(rest);
+            if (rest < 100) {
+                result += convertSmallNumber(quotient) + "-mille-" + convertSmallNumber(rest);
+            } else {
+                result += convertSmallNumber(quotient) + "-mille-" + convertHundredNumber(rest);
+            }
         } else if ((integerPart >= 1e5) && (integerPart < 1e6)) {
-            result += convertHundredNumber(quotient) + "-mille-" + convertHundredNumber(rest);
+            if (rest < 100) {
+                result += convertHundredNumber(quotient) + "-mille-" + convertSmallNumber(rest);
+            } else {
+                result += convertHundredNumber(quotient) + "-mille-" + convertHundredNumber(rest);
+            }
         }
     } else if ((integerPart >= 1e6) && (integerPart < 1e9)) {
         int quotient = integerPart / 1e6;
         int rest = integerPart % 1000000;
         if ((integerPart >= 1e6) && (integerPart < 1e8)) {
-            result += convertSmallNumber(quotient) + "-millions-" + convertThousandNumber(rest);
+            if (rest < 100) {
+                result += convertSmallNumber(quotient) + "-millions-" + convertSmallNumber(rest);
+            } else if ((rest >= 100) && (rest < 1000)) {
+                result += convertSmallNumber(quotient) + "-millions-" + convertHundredNumber(rest);
+            } else {
+                result += convertSmallNumber(quotient) + "-millions-" + convertThousandNumber(rest);
+            }
         } else if ((integerPart >= 1e8) && (integerPart < 1e9)) {
-            result += convertHundredNumber(quotient) + "-millions-" + convertThousandNumber(rest);
+            if (rest < 100) {
+                result += convertHundredNumber(quotient) + "-millions-" + convertSmallNumber(rest);
+            } else if ((rest >= 100) && (rest < 1000)) {
+                result += convertHundredNumber(quotient) + "-millions-" + convertHundredNumber(rest);
+            } else {
+                result += convertHundredNumber(quotient) + "-millions-" + convertThousandNumber(rest);
+            }
         }
     } else {
-        if ((integerPart >= 1e9) && (integerPart < 1e10)) {
-            result += convertSmallNumber(quotient) + "-milliards-" + convertThousandNumber(rest);
+        if ((integerPart >= 1e9) && (integerPart < 1e11)) {
+            if (rest < 100) {
+                result += convertSmallNumber(quotient) + "-milliards-" + convertSmallNumber(rest);
+            } else if ((rest >= 100) && (rest < 1000)) {
+                result += convertSmallNumber(quotient) + "-milliards-" + convertHundredNumber(rest);
+            } else {
+                result += convertSmallNumber(quotient) + "-milliards-" + convertThousandNumber(rest);
+            }
+        } else {
+            if ((integerPart >= 1e11) && integerPart < 1e12) {
+                if (rest < 100) {
+                    result += convertHundredNumber(quotient) + "-milliards-" + convertSmallNumber(rest);
+                } else if ((rest >= 100) && (rest < 1000)) {
+                    result += convertHundredNumber(quotient) + "-milliards-" + convertHundredNumber(rest);
+                } else {
+                    result += convertHundredNumber(quotient) + "-milliards-" + convertThousandNumber(rest);
+                }
+            } else {
+                result = "erreur : montant trop grand";
+            }
         }
     }
     return result;
 }
 
 string convertDecimal(long double num) {
-    int integerPart = (int) num;
-    int decimalPart = floor((num - integerPart) * 100 + 0.5);
+    long int integerPart = (long int) num;
+    int decimalPart = round((num - integerPart) * 100);
     string result;
 
     if (decimalPart > 0) {
-        result += "et ";
-        result += dozen(decimalPart / 10);
-        result += unity(decimalPart % 10);
+        result += convertSmallNumber(decimalPart) + "-";
     }
+    if (result.back() == '-') {
+        result.pop_back();
+        result += " centimes";
+    }
+    return result;
+}
 
+string checkNumber(long double number) {
+    string result;
+    if (number < 0) {
+        result = "erreur : montant negatif";
+    } else if (number == 0) {
+        result += "zero franc";
+    } else if ((number > 0) && (number < 1)) {
+        result += convertDecimal(number);
+    } else if ((number > 0) && (number < 100)) {
+        result += convertSmallNumber(number) + " francs et " + convertDecimal(number);
+    } else if ((number >= 100) && (number < 1000)) {
+        result += convertHundredNumber(number) + " francs et " + convertDecimal(number);
+    } else {
+        result += convertThousandNumber(number) + " francs et " + convertDecimal(number);
+    }
+    if (result.substr(result.length() - 3) == "et ") {
+        result = result.substr(0, result.length() - 3);
+    } else if (result.find("grand")) {
+        result = "erreur : montant trop grand";
+    }
     return result;
 }
 
 string montantEnToutesLettres(long double montant) {
-    return convertThousandNumber(montant) + " francs";
+    return checkNumber(montant);
 }
