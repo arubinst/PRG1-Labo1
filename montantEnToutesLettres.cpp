@@ -5,9 +5,9 @@
 using namespace std;
 
 
-long double roundFractional(long double montant);
+long double roundFractional(long double amount);
 
-long long separator(long double montant, bool decimalOrFractional);
+long long separator(long double amount, bool decimalOrFractional);
 
 string convertUnit(int unit);
 
@@ -23,7 +23,7 @@ string numberToText(long long int number);
 
 string agregator(long long int decimal, long int fractional);
 
-string isNumberInRange(long double montant);
+string isNumberInRange(long double amount);
 
 
 string convertUnit(int unit) {
@@ -187,16 +187,16 @@ string agregator(long long int decimal, long int fractional) {
     return "ERROR";
 }
 
-long double roundFractional(long double montant) {
+long double roundFractional(long double amount) {
 
-    return round(montant * 100) / 100;
+    return round(amount * 100) / 100;
 }
 
 
-long long int separator(long double montant, bool decimalOrFractional) {
+long long int separator(long double amount, bool decimalOrFractional) {
     // Fractional == False,  Decimal == True
     long double decimalPart;
-    long double fractionalPart = modf(roundFractional(montant), &decimalPart);
+    long double fractionalPart = modf(roundFractional(amount), &decimalPart);
 
     if (decimalOrFractional) {
         return static_cast<long long int>(decimalPart);
@@ -208,12 +208,12 @@ long long int separator(long double montant, bool decimalOrFractional) {
 }
 
 
-string isNumberInRange(long double montant) {
+string isNumberInRange(long double amount) {
     string flag;
-    if (montant < 0) {
-        flag = "erreur : montant negatif";
-    } else if (montant > 999'999'999'999.99) {
-        flag = "erreur : montant trop grand";
+    if (amount < 0) {
+        flag = "erreur : amount negatif";
+    } else if (amount > 999'999'999'999.99) {
+        flag = "erreur : amount trop grand";
     } else {
         flag = "";
     }
