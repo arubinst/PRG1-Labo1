@@ -241,8 +241,8 @@ string checkNumber(long double number) {
     }
     if (result.substr(result.length() - 3) == "et ") {
         result = result.substr(0, result.length() - 3);
-    } else if (result.find("grand")) {
-        result = "erreur : montant trop grand";
+    } else if (result.find("grand") != string::npos) {
+        return result = "erreur : montant trop grand";
     }
     return result;
 }
