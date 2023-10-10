@@ -1,13 +1,10 @@
 #include <string>
-#include <cmath>
-
 using namespace std;
 
-// liste littéraire des unités
-string unity(int number) {
+string conversion_valeur(int number) {
     switch (number) {
         case 0:
-            return "";
+            return "zero";
         case 1:
             return "un";
         case 2:
@@ -26,13 +23,6 @@ string unity(int number) {
             return "huit";
         case 9:
             return "neuf";
-        default:
-            return "";
-    }
-}
-
-string dozenExeptions(int number) {
-    switch (number) {
         case 10:
             return "dix";
         case 11:
@@ -47,206 +37,126 @@ string dozenExeptions(int number) {
             return "quinze";
         case 16:
             return "seize";
-        default:
-            return "";
-    }
-}
-
-// liste littéraire des dizaines
-string dozen(int number) {
-    switch (number) {
-        case 1:
-            return "dix";
-        case 2:
+        case 20:
             return "vingt";
-        case 3:
+        case 30:
             return "trente";
-        case 4:
+        case 40:
             return "quarante";
-        case 5:
+        case 50:
             return "cinquante";
-        case 6:
+        case 60:
             return "soixante";
-        case 7:
+        case 70:
             return "septante";
-        case 8:
+        case 80:
             return "huitante";
-        case 9:
+        case 90:
             return "nonante";
         default:
-            return "";
+            throw "Une valeur d'argument du switch de conversion() invalide à été saisie";
     }
 }
 
-// Fonction transformant la valeur numérique en texte
-string convertSmallNumber(long double num) {
-    int integerPart = (int) num;
-    int quotient = integerPart / 10;
-    int rest = integerPart % 10;
-    string result;
+string conversion(long montant) {
 
-    if (integerPart < 10) {
-        return result += unity(integerPart);
-    } else if (integerPart < 17) {
-        return result += dozenExeptions(integerPart);
-    }
-    if (rest == 0) {
-        result += dozen(quotient);
-    } else {
-        if (rest == 1) {
-            result += dozen(quotient) + "-et-" + unity(rest);
-        } else {
-            result += dozen(quotient) + "-" + unity(rest);
+// 1 à 16---------------------------------------------------------------------------------------------------------------
+    if (montant <= 16) {
+        return conversion_valeur(montant);
+// Dizaines-------------------------------------------------------------------------------------------------------------
+    } else if (montant < 100) { // Dizaine OK
+        int unite = montant % 10;
+        int dizaine = montant - unite;
+        if (unite == 0) {
+            return conversion_valeur(dizaine);
         }
-    }
-    return result;
-}
-
-string convertHundredNumber(long double num) {
-    int integerPart = (int) num;
-    int quotient = integerPart / 100;
-    int rest = integerPart % 100;
-    string result;
-
-    if ((integerPart >= 100) && (integerPart < 1000)) {
-        if ((quotient == 1) && (rest == 0)) {
-            result += "cent";
-        } else if ((quotient > 1) && (rest == 0)) {
-            result += convertSmallNumber(quotient) + "-cents";
-        } else if ((quotient == 1) && (rest < 10)) {
-            result += "cent-" + convertSmallNumber(rest);
-        } else if ((quotient == 1) && (rest >= 10) && (rest < 100)) {
-            result += "cent-" + convertSmallNumber(rest);
-        } else {
-            result += convertSmallNumber(quotient) + "-cent-" + convertSmallNumber(rest);
+        return conversion_valeur(dizaine) + '-' + conversion(unite);
+// Centaines------------------------------------------------------------------------------------------------------------
+    } else if (montant < 1000) {
+        int centaine = montant / 100;
+        int reste = montant % 100;
+        if (centaine == 1) {
+            if (reste == 0) {
+                return "cent";
+            }
+            return "cent-" + conversion(reste);
         }
-    }
-    return result;
-}
-
-string convertThousandNumber(long double num) {
-    long int integerPart = (long int) num;
-    string result;
-    int quotient = integerPart / 1e9;
-    int rest = integerPart % 1000000000;
-    if ((integerPart >= 1000) && (integerPart < 1e6)) {
-        int quotient = integerPart / 1000;
-        int rest = integerPart % 1000;
-        if ((integerPart >= 1000) && (integerPart < 1e4)) {
-            quotient = integerPart / 1000;
-            rest = integerPart % 1000;
-            if ((quotient == 1) && (rest == 0)) {
-                result += "mille";
-            } else if ((quotient == 1) && (rest < 10)) {
-                result += "mille-" + convertSmallNumber(rest);
-            } else if ((quotient == 1) && (rest < 100)) {
-                result += "mille-" + convertSmallNumber(rest);
-            } else if ((quotient == 1) && (rest < 1000)) {
-                result += "mille-" + convertHundredNumber(rest);
-            } else if ((quotient > 1) && (rest == 0)) {
-                result += convertSmallNumber(quotient) + "-milles";
-            } else if ((quotient > 1) && (rest < 100)) {
-                result += convertSmallNumber(quotient) + "-mille-" + convertSmallNumber(rest);
-            } else {
-                result += convertSmallNumber(quotient) + "-mille-" + convertHundredNumber(rest);
-            }
-        } else if ((integerPart >= 1e4) && (integerPart < 1e5)) {
-            if (rest < 100) {
-                result += convertSmallNumber(quotient) + "-mille-" + convertSmallNumber(rest);
-            } else {
-                result += convertSmallNumber(quotient) + "-mille-" + convertHundredNumber(rest);
-            }
-        } else if ((integerPart >= 1e5) && (integerPart < 1e6)) {
-            if (rest < 100) {
-                result += convertHundredNumber(quotient) + "-mille-" + convertSmallNumber(rest);
-            } else {
-                result += convertHundredNumber(quotient) + "-mille-" + convertHundredNumber(rest);
-            }
+        if (reste == 0) {
+            return conversion(centaine) + "-cents";
         }
-    } else if ((integerPart >= 1e6) && (integerPart < 1e9)) {
-        int quotient = integerPart / 1e6;
-        int rest = integerPart % 1000000;
-        if ((integerPart >= 1e6) && (integerPart < 1e8)) {
-            if (rest < 100) {
-                result += convertSmallNumber(quotient) + "-millions-" + convertSmallNumber(rest);
-            } else if ((rest >= 100) && (rest < 1000)) {
-                result += convertSmallNumber(quotient) + "-millions-" + convertHundredNumber(rest);
-            } else {
-                result += convertSmallNumber(quotient) + "-millions-" + convertThousandNumber(rest);
+        return conversion(centaine) + "-cent-" + conversion(reste);
+
+    }
+// Milliers-------------------------------------------------------------------------------------------------------------
+    else if (montant < 1000000) {
+        int millier = montant / 1000;
+        int reste = montant % 1000;
+        if (millier == 1) {
+            if (reste == 0) {
+                return "mille";
             }
-        } else if ((integerPart >= 1e8) && (integerPart < 1e9)) {
-            if (rest < 100) {
-                result += convertHundredNumber(quotient) + "-millions-" + convertSmallNumber(rest);
-            } else if ((rest >= 100) && (rest < 1000)) {
-                result += convertHundredNumber(quotient) + "-millions-" + convertHundredNumber(rest);
-            } else {
-                result += convertHundredNumber(quotient) + "-millions-" + convertThousandNumber(rest);
-            }
+            return "mille-" + conversion(reste);
         }
-    } else {
-        if ((integerPart >= 1e9) && (integerPart < 1e11)) {
-            if (rest < 100) {
-                result += convertSmallNumber(quotient) + "-milliards-" + convertSmallNumber(rest);
-            } else if ((rest >= 100) && (rest < 1000)) {
-                result += convertSmallNumber(quotient) + "-milliards-" + convertHundredNumber(rest);
-            } else {
-                result += convertSmallNumber(quotient) + "-milliards-" + convertThousandNumber(rest);
-            }
-        } else {
-            if ((integerPart >= 1e11) && integerPart < 1e12) {
-                if (rest < 100) {
-                    result += convertHundredNumber(quotient) + "-milliards-" + convertSmallNumber(rest);
-                } else if ((rest >= 100) && (rest < 1000)) {
-                    result += convertHundredNumber(quotient) + "-milliards-" + convertHundredNumber(rest);
-                } else {
-                    result += convertHundredNumber(quotient) + "-milliards-" + convertThousandNumber(rest);
-                }
-            } else {
-                result = "erreur : montant trop grand";
-            }
+        if (reste == 0) {
+            return conversion(millier) + "-milles";
         }
+        return conversion(millier) + "-mille-" + conversion(reste);
     }
-    return result;
+// Million--------------------------------------------------------------------------------------------------------------
+    else if (montant < 1000000000) {
+        int million = montant / 1000000;
+        int reste = montant % 1000000;
+
+        if (million == 1 && reste == 0) {
+            return "un-millions";
+        }
+        if (reste == 0) {
+            return conversion(million) + "-millions";
+        }
+        return conversion(million) + "-million-" + conversion(reste);
+    }
+// Milliard-------------------------------------------------------------------------------------------------------------
+    else if (montant < 1000000000000) {
+        int milliard = montant / 1000000000;
+        int reste = montant % 1000000000;
+        if (milliard == 1 && reste == 0) {
+            return "un-milliard";
+        }
+        if (reste == 0) {
+            return conversion(milliard) + "-milliards";
+        }
+        return conversion(milliard) + "-milliard-" + conversion(reste);
+    }
+// Valeur trop grande---------------------------------------------------------------------------------------------------
+
+    else {
+        return "Entrée trop grande";
+    }
 }
-
-string convertDecimal(long double num) {
-    long int integerPart = (long int) num;
-    int decimalPart = round((num - integerPart) * 100);
-    string result;
-
-    if (decimalPart > 0) {
-        result += convertSmallNumber(decimalPart) + "-";
-    }
-    if (result.back() == '-') {
-        result.pop_back();
-        result += " centimes";
-    }
-    return result;
-}
-
-string checkNumber(long double number) {
-    string result;
-    if (number < 0) {
-        result = "erreur : montant negatif";
-    } else if (number == 0) {
-        result += "zero franc";
-    } else if ((number > 0) && (number < 1)) {
-        result += convertDecimal(number);
-    } else if ((number > 0) && (number < 100)) {
-        result += convertSmallNumber(number) + " francs et " + convertDecimal(number);
-    } else if ((number >= 100) && (number < 1000)) {
-        result += convertHundredNumber(number) + " francs et " + convertDecimal(number);
-    } else {
-        result += convertThousandNumber(number) + " francs et " + convertDecimal(number);
-    }
-    if (result.substr(result.length() - 3) == "et ") {
-        result = result.substr(0, result.length() - 3);
-    } else if (result.find("grand") != string::npos) {
-        return result = "erreur : montant trop grand";
-    }
-    return result;
-}
-
+//----------------------------------------------------------------------------------------------------------------------
 string montantEnToutesLettres(long double montant) {
-    return checkNumber(montant);
+    // Séparation de la partie entière et décimal du montant
+    long entier_montant = montant;
+    long reste_montant = (montant - entier_montant) * 100;
+    string resultat = "";
+
+    if (entier_montant == 0 && reste_montant == 0) {
+        return "zero franc";
+    }
+
+    if (entier_montant != 0) {
+        resultat += conversion(entier_montant) + (entier_montant > 1 ? " francs" : " franc");
+    }
+
+    if (reste_montant != 0) {
+        if (entier_montant != 0) {
+            resultat += " et ";
+        }
+        resultat += conversion(reste_montant) + (reste_montant > 1 ? " centimes" : " centime");
+    }
+
+    return resultat;
 }
+
+
+// (;,;)
