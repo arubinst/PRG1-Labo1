@@ -1,13 +1,12 @@
 #include "montantEnToutesLettres.h"
 #include <cmath>
 
-//# TODO : ask if okay to use English as their func are named in french
 using namespace std;
 
 
 long double roundFractional(long double amount);
 
-long long separator(long double amount, bool decimalOrFractional);
+long long separator(long double amount, bool isDecimal);
 
 string convertUnit(int unit);
 
@@ -15,9 +14,9 @@ string convertSpecial(int special);
 
 string convertTens(int tens);
 
-string tensToText(int smallInt);
+string tensToText(int tens);
 
-string hundredsToText(int hundred, bool mille_after);
+string hundredsToText(int hundreds, bool isBeforeThousand);
 
 string numberToText(long long int number);
 
@@ -70,16 +69,16 @@ string convertTens(int tens) {
     }
 }
 
-string tensToText(int smallInt) {
+string tensToText(int tens) {
 //    0-99
-    if (smallInt < 10) {
-        return convertUnit(smallInt);
-    } else if (smallInt <= 16) {
-        return convertSpecial(smallInt);
+    if (tens < 10) {
+        return convertUnit(tens);
+    } else if (tens <= 16) {
+        return convertSpecial(tens);
     }
 
-    int quotient = smallInt / 10;
-    int rest = smallInt % 10;
+    int quotient = tens / 10;
+    int rest = tens % 10;
 
     if (rest == 0) {
         return convertTens(quotient);
@@ -89,16 +88,16 @@ string tensToText(int smallInt) {
     }
 }
 
-string hundredsToText(int hundred, bool mille_after = false) {
+string hundredsToText(int hundreds, bool isBeforeThousand = false) {
 //    0-999
-    int quotient = hundred / 100;
-    int rest = hundred % 100;
+    int quotient = hundreds / 100;
+    int rest = hundreds % 100;
 
     if (quotient == 0) {
-        return tensToText(hundred);
+        return tensToText(hundreds);
     }
 
-    string cent = (quotient > 1 && rest == 0 && !mille_after ? "cents" : "cent");
+    string cent = (quotient > 1 && rest == 0 && !isBeforeThousand ? "cents" : "cent");
     string tens = (rest == 0 ? "" : "-" + tensToText(rest));
     if (quotient == 1) {
         return cent + tens;
@@ -107,42 +106,42 @@ string hundredsToText(int hundred, bool mille_after = false) {
     }
 }
 
-const int one_billion = 1e9,
-        one_million = 1e6,
-        one_thousand = 1e3;
+const int oneBillion = 1e9,
+        oneMillion = 1e6,
+        oneThousand = 1e3;
 
 string numberToText(long long int number) {
-    string number_text;
+//    0-999'999'999'999
+    string numberText;
 
-    int order = number / one_billion;
-    long int rest = number - order * one_billion;
+    int order = number / oneBillion;
+    long int rest = number - order * oneBillion;
     if (order >= 1) {
-        number_text += hundredsToText(order) + "-milliard" + (order > 1 ? "s" : "") + (rest != 0 ? "-" : " de");
+        numberText += hundredsToText(order) + "-milliard" + (order > 1 ? "s" : "") + (rest != 0 ? "-" : " de");
     }
 
-    order = rest / one_million;
-    rest -= order * one_million;
+    order = rest / oneMillion;
+    rest -= order * oneMillion;
     if (order >= 1) {
-        number_text += hundredsToText(order) + "-million" + (order > 1 ? "s" : "") + (rest != 0 ? "-" : " de");
+        numberText += hundredsToText(order) + "-million" + (order > 1 ? "s" : "") + (rest != 0 ? "-" : " de");
     }
 
-    order = rest / one_thousand;
-    rest -= order * one_thousand;
+    order = rest / oneThousand;
+    rest -= order * oneThousand;
     if (order == 1) {
-        number_text = number_text + "mille" + (rest != 0 ? "-" : "");
+        numberText = numberText + "mille" + (rest != 0 ? "-" : "");
     } else if (order >= 1) {
-        number_text += hundredsToText(order, true) + "-mille" + (rest != 0 ? "-" : "");
+        numberText += hundredsToText(order, true) + "-mille" + (rest != 0 ? "-" : "");
     }
 
     if (rest >= 1 or number == 0) {
-        number_text += hundredsToText(rest);
+        numberText += hundredsToText(rest);
     }
 
-    return number_text;
+    return numberText;
 }
 
 string agregator(long long int decimal, long int fractional) {
-
     string result;
     string beforeComma = numberToText(decimal);
     string afterComma = numberToText(fractional);
@@ -155,24 +154,21 @@ string agregator(long long int decimal, long int fractional) {
         return beforeComma + (decimal <= 1 ? " franc et " : " francs et ") + afterComma +
                (fractional <= 1 ? " centime" : " centimes");
     }
-    return "ERROR";
 }
 
 long double roundFractional(long double amount) {
-
     return round(amount * 100) / 100;
 }
 
 
-long long int separator(long double amount, bool decimalOrFractional) {
-    // Fractional == False,  Decimal == True
+long long int separator(long double amount, bool isDecimal) {
     long double decimalPart;
     long double fractionalPart = modf(roundFractional(amount), &decimalPart);
 
-    if (decimalOrFractional) {
+    if (isDecimal) {
         return static_cast<long long int>(decimalPart);
     } else {
-        fractionalPart = roundFractional(fractionalPart);//added for fix rounding error of c++
+        fractionalPart = roundFractional(fractionalPart);  // added to fix rounding error of c++
         fractionalPart *= 100;
         return fractionalPart;
     }
