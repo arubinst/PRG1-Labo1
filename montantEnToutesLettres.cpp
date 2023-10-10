@@ -28,74 +28,45 @@ string isNumberInRange(long double amount);
 
 string convertUnit(int unit) {
     switch (unit) {
-        case 0:
-            return "zero";
-        case 1:
-            return "un";
-        case 2:
-            return "deux";
-        case 3:
-            return "trois";
-        case 4:
-            return "quatre";
-        case 5:
-            return "cinq";
-        case 6:
-            return "six";
-        case 7:
-            return "sept";
-        case 8:
-            return "huit";
-        case 9:
-            return "neuf";
-        default:
-            return "";
+        case 0:return "zero";
+        case 1:return "un";
+        case 2:return "deux";
+        case 3:return "trois";
+        case 4:return "quatre";
+        case 5:return "cinq";
+        case 6:return "six";
+        case 7:return "sept";
+        case 8:return "huit";
+        case 9:return "neuf";
+        default:return "";
     }
 }
 
 string convertSpecial(int special) {
     switch (special) {
-        case 10:
-            return "dix";
-        case 11:
-            return "onze";
-        case 12:
-            return "douze";
-        case 13:
-            return "treize";
-        case 14:
-            return "quatorze";
-        case 15:
-            return "quinze";
-        case 16:
-            return "seize";
-        default:
-            return "";
+        case 10:return "dix";
+        case 11:return "onze";
+        case 12:return "douze";
+        case 13:return "treize";
+        case 14:return "quatorze";
+        case 15:return "quinze";
+        case 16:return "seize";
+        default:return "";
     }
 }
 
 string convertTens(int tens) {
     switch (tens) {
-        case 1:
-            return "dix";
-        case 2:
-            return "vingt";
-        case 3:
-            return "trente";
-        case 4:
-            return "quarante";
-        case 5:
-            return "cinquante";
-        case 6:
-            return "soixante";
-        case 7:
-            return "septante";
-        case 8:
-            return "huitante";
-        case 9:
-            return "nonante";
-        default:
-            return "";
+        case 1:return "dix";
+        case 2:return "vingt";
+        case 3:return "trente";
+        case 4:return "quarante";
+        case 5:return "cinquante";
+        case 6:return "soixante";
+        case 7:return "septante";
+        case 8:return "huitante";
+        case 9:return "nonante";
+        default:return "";
     }
 }
 
@@ -211,9 +182,9 @@ long long int separator(long double amount, bool decimalOrFractional) {
 string isNumberInRange(long double amount) {
     string flag;
     if (amount < 0) {
-        flag = "erreur : amount negatif";
+        flag = "erreur : montant negatif";
     } else if (amount > 999'999'999'999.99) {
-        flag = "erreur : amount trop grand";
+        flag = "erreur : montant trop grand";
     } else {
         flag = "";
     }
