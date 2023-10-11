@@ -72,6 +72,9 @@ string conversion(long long montant) {
         if (unite == 0) {
             return conversion_valeur(dizaine);
         }
+        if (conversion(unite) == "un") {
+            return conversion(dizaine) + "-et-" + conversion(unite);
+        }
         return conversion_valeur(dizaine) + '-' + conversion(unite);
 // Centaines------------------------------------------------------------------------------------------------------------
     } else if (montant < 1000) {
@@ -83,7 +86,7 @@ string conversion(long long montant) {
             }
             return "cent-" + conversion(reste);
         }
-        if (reste == 0) {
+        if (centaine > 1 && reste == 0) {
             return conversion(centaine) + "-cents";
         }
         return conversion(centaine) + "-cent-" + conversion(reste);
@@ -92,6 +95,8 @@ string conversion(long long montant) {
     else if (montant < 1000000) {
         int millier = montant / 1000;
         int reste = montant % 1000;
+        const string search = "cents";
+        const string replace = "cent";
         if (millier == 1) {
             if (reste == 0) {
                 return "mille";
@@ -100,6 +105,11 @@ string conversion(long long montant) {
         }
         if (reste == 0) {
             return conversion(millier) + "-milles";
+        }
+        if (conversion(millier).find(search) != string::npos) {
+            return conversion(millier) =
+                           conversion(millier).replace(conversion(millier).find(search), search.length(), replace) +
+                           "-mille-" + conversion(reste);
         }
         return conversion(millier) + "-mille-" + conversion(reste);
     }
@@ -112,9 +122,9 @@ string conversion(long long montant) {
             return "un-million de ";
         }
         if (reste == 0) {
-            return conversion(million) + "-millions";
+            return conversion(million) + "-millions" + " de";
         }
-        return conversion(million) + "-million-" + conversion(reste);
+        return conversion(million) + "-millions-" + conversion(reste);
     }
 // Milliard-------------------------------------------------------------------------------------------------------------
     else if (montant < 1000000000000) {
@@ -124,9 +134,9 @@ string conversion(long long montant) {
             return "un-milliard";
         }
         if (reste == 0) {
-            return conversion(milliard) + "-milliards de ";
+            return conversion(milliard) + "-milliards";
         }
-        return conversion(milliard) + "-milliard-" + conversion(reste);
+        return conversion(milliard) + "-milliards-" + conversion(reste);
     }
 // Valeur trop grande---------------------------------------------------------------------------------------------------
 
@@ -138,75 +148,51 @@ string conversion(long long montant) {
 // ---------------------------------------------------------------------------------------------------------------------
 string montantEnToutesLettres(long double montant) {
     // Séparation de la partie entière et décimal du montant
-    long long int entier_montant = (long long int) montant;
+    long int intergerPart = static_cast<long int> (montant);
+    long int valeurMil = static_cast<int>(montant * 1000);
+    long int troisiemeDecimale = valeurMil % 10;
+    int decimalPart = static_cast<int>((montant - floor(montant)) * 100);
 
-
-    int montant_fois_mille = montant * 1000;
-    int reste_montant_part_2 = montant_fois_mille % 10;
-    int reste_montant;
-
-    if (reste_montant_part_2 <= 4) {
-        montant_fois_mille -= reste_montant_part_2;
-    } else if (reste_montant_part_2 >= 5) {
-        montant_fois_mille += (10 - reste_montant_part_2);
+    if (decimalPart != 0) {
+        if ((troisiemeDecimale <= 4) && (troisiemeDecimale > 0)) {
+            valeurMil -= troisiemeDecimale;
+        } else if (troisiemeDecimale >= 5) {
+            valeurMil += (10 - troisiemeDecimale);
+            if (valeurMil == 1000) {
+                decimalPart = 0;
+                intergerPart++;
+            } else if (valeurMil >= 1000) {
+                if (decimalPart == 99) {
+                    decimalPart = 0;
+                    intergerPart++;
+                } else {
+                    decimalPart++;
+                }
+            }
+        } else {
+            decimalPart = (valeurMil / 10) % 100;
+        }
     }
-    if (montant_fois_mille = 1000) {
-        reste_montant = 0;
-        entier_montant++;
-    } else {
-        reste_montant = (montant_fois_mille / 10) % 100;
-    }
-
     //long reste_montant = (montant - entier_montant) * 100;
-
-
-
     if (montant < 0) {
         return "erreur : montant negatif";
     }
-
     if (montant > 999999999999) {
         return "erreur : montant trop grand";
     }
-
-    if (entier_montant == 0 && reste_montant == 0) {
+    if (intergerPart == 0 && decimalPart == 0) {
         return "zero franc";
     }
-
-    string resultat = "";
-
-    if (entier_montant != 0) {
-        resultat += conversion(entier_montant) + (entier_montant > 1 ? " francs" : " franc");
+    string resultat;
+    if (intergerPart != 0) {
+        resultat += conversion(intergerPart) + (intergerPart > 1 ? " francs" : " franc");
     }
-
-    if (reste_montant != 0) {
-        resultat += " et ";
+    if (decimalPart != 0) {
+        if (intergerPart != 0) {
+            resultat += " et ";
+        }
+        resultat += conversion(decimalPart) + (decimalPart > 1 ? " centimes" : " centime");
     }
 
     return resultat;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// (;,;)
