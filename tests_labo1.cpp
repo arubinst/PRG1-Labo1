@@ -11,7 +11,8 @@ array testValues { make_pair(0.00,"zero franc"s) ,
                    make_pair(0.01,"un centime"s),
                    make_pair(0.23,"vingt-trois centimes"s) ,
                    make_pair(0.71,"septante-et-un centimes"s) ,
-                   make_pair(0.995,"un franc"s) ,
+                   make_pair(0.994,"nonante-neuf centimes"s) ,
+                   make_pair(0.996,"un franc"s) ,
                    make_pair(1.00,"un franc"s) ,
                    make_pair(1.89,"un franc et huitante-neuf centimes"s) ,
                    make_pair(2.17,"deux francs et dix-sept centimes"s) ,
@@ -39,9 +40,9 @@ array testValues { make_pair(0.00,"zero franc"s) ,
                    make_pair(9876543210987654.00,"erreur : montant trop grand"s) };
 
 TEST_CASE( "Tests fournis aux etudiants", "TestValues") {
-   for(auto& p : testValues) {
-      SECTION(to_string(p.first) + " == " + p.second) {
-         REQUIRE(montantEnToutesLettres(p.first) == p.second);
-      }
-   }
+    for(auto& p : testValues) {
+        SECTION(to_string(p.first) + " == " + p.second) {
+            REQUIRE(montantEnToutesLettres(p.first) == p.second);
+        }
+    }
 }
