@@ -1,4 +1,6 @@
 #include <string>
+#include "math.h"
+
 using namespace std;
 
 string conversion_valeur(int number) {
@@ -58,7 +60,7 @@ string conversion_valeur(int number) {
     }
 }
 
-string conversion(long montant) {
+string conversion(long long montant) {
 
 // 1 à 16---------------------------------------------------------------------------------------------------------------
     if (montant <= 16) {
@@ -73,8 +75,8 @@ string conversion(long montant) {
         return conversion_valeur(dizaine) + '-' + conversion(unite);
 // Centaines------------------------------------------------------------------------------------------------------------
     } else if (montant < 1000) {
-        int centaine = montant / 100;
-        int reste = montant % 100;
+        long centaine = montant / 100;
+        long reste = montant % 100;
         if (centaine == 1) {
             if (reste == 0) {
                 return "cent";
@@ -85,7 +87,6 @@ string conversion(long montant) {
             return conversion(centaine) + "-cents";
         }
         return conversion(centaine) + "-cent-" + conversion(reste);
-
     }
 // Milliers-------------------------------------------------------------------------------------------------------------
     else if (montant < 1000000) {
@@ -108,7 +109,7 @@ string conversion(long montant) {
         int reste = montant % 1000000;
 
         if (million == 1 && reste == 0) {
-            return "un-millions";
+            return "un-million de ";
         }
         if (reste == 0) {
             return conversion(million) + "-millions";
@@ -117,46 +118,95 @@ string conversion(long montant) {
     }
 // Milliard-------------------------------------------------------------------------------------------------------------
     else if (montant < 1000000000000) {
-        int milliard = montant / 1000000000;
-        int reste = montant % 1000000000;
+        long long int milliard = montant / 1000000000;
+        long long int reste = montant % 1000000000;
         if (milliard == 1 && reste == 0) {
             return "un-milliard";
         }
         if (reste == 0) {
-            return conversion(milliard) + "-milliards";
+            return conversion(milliard) + "-milliards de ";
         }
         return conversion(milliard) + "-milliard-" + conversion(reste);
     }
 // Valeur trop grande---------------------------------------------------------------------------------------------------
 
     else {
-        return "Entrée trop grande";
+        throw "Une valeur d'argument trop grande est arrivee dans la fonction Conversion()";
     }
 }
-//----------------------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------------------------------------------------
 string montantEnToutesLettres(long double montant) {
     // Séparation de la partie entière et décimal du montant
-    long entier_montant = montant;
-    long reste_montant = (montant - entier_montant) * 100;
-    string resultat = "";
+    long long int entier_montant = (long long int) montant;
+
+
+    int montant_fois_mille = montant * 1000;
+    int reste_montant_part_2 = montant_fois_mille % 10;
+    int reste_montant;
+
+    if (reste_montant_part_2 <= 4) {
+        montant_fois_mille -= reste_montant_part_2;
+    } else if (reste_montant_part_2 >= 5) {
+        montant_fois_mille += (10 - reste_montant_part_2);
+    }
+    if (montant_fois_mille = 1000) {
+        reste_montant = 0;
+        entier_montant++;
+    } else {
+        reste_montant = (montant_fois_mille / 10) % 100;
+    }
+
+    //long reste_montant = (montant - entier_montant) * 100;
+
+
+
+    if (montant < 0) {
+        return "erreur : montant negatif";
+    }
+
+    if (montant > 999999999999) {
+        return "erreur : montant trop grand";
+    }
 
     if (entier_montant == 0 && reste_montant == 0) {
         return "zero franc";
     }
+
+    string resultat = "";
 
     if (entier_montant != 0) {
         resultat += conversion(entier_montant) + (entier_montant > 1 ? " francs" : " franc");
     }
 
     if (reste_montant != 0) {
-        if (entier_montant != 0) {
-            resultat += " et ";
-        }
-        resultat += conversion(reste_montant) + (reste_montant > 1 ? " centimes" : " centime");
+        resultat += " et ";
     }
 
     return resultat;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // (;,;)
