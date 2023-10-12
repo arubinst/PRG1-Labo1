@@ -2,7 +2,7 @@
 #include "math.h"
 
 using namespace std;
-
+// "Tableau" de conversion des valeur fait a partir d'un switch
 string conversion_valeur(int number) {
     switch (number) {
         case 0:
@@ -59,14 +59,11 @@ string conversion_valeur(int number) {
             throw "Une valeur d'argument du switch de conversion() invalide à été saisie";
     }
 }
-
+// Fonction recursive qui convertit le nombre en mots-------------------------------------------------------------------
 string conversion(long long montant) {
-
-// 1 à 16---------------------------------------------------------------------------------------------------------------
     if (montant <= 16) {
         return conversion_valeur(montant);
-// Dizaines-------------------------------------------------------------------------------------------------------------
-    } else if (montant < 100) { // Dizaine OK
+    } else if (montant < 100) { // Gestion des dizaines
         int unite = montant % 10;
         int dizaine = montant - unite;
         if (unite == 0) {
@@ -76,8 +73,7 @@ string conversion(long long montant) {
             return conversion(dizaine) + "-et-" + conversion(unite);
         }
         return conversion_valeur(dizaine) + '-' + conversion(unite);
-// Centaines------------------------------------------------------------------------------------------------------------
-    } else if (montant < 1000) {
+    } else if (montant < 1000) { // Gestion des centaines
         long centaine = montant / 100;
         long reste = montant % 100;
         if (centaine == 1) {
@@ -91,8 +87,7 @@ string conversion(long long montant) {
         }
         return conversion(centaine) + "-cent-" + conversion(reste);
     }
-// Milliers-------------------------------------------------------------------------------------------------------------
-    else if (montant < 1000000) {
+    else if (montant < 1000000) { // Gestion des milliers
         int millier = montant / 1000;
         int reste = montant % 1000;
         const string search = "cents";
@@ -113,8 +108,7 @@ string conversion(long long montant) {
         }
         return conversion(millier) + "-mille-" + conversion(reste);
     }
-// Million--------------------------------------------------------------------------------------------------------------
-    else if (montant < 1000000000) {
+    else if (montant < 1000000000) {// Gestion des millions
         int million = montant / 1000000;
         int reste = montant % 1000000;
 
@@ -126,8 +120,7 @@ string conversion(long long montant) {
         }
         return conversion(million) + "-millions-" + conversion(reste);
     }
-// Milliard-------------------------------------------------------------------------------------------------------------
-    else if (montant < 1000000000000) {
+    else if (montant < 1000000000000) { // Gestion des milliards
         long long int milliard = montant / 1000000000;
         long long int reste = montant % 1000000000;
         if (milliard == 1 && reste == 0) {
@@ -138,7 +131,7 @@ string conversion(long long montant) {
         }
         return conversion(milliard) + "-milliards-" + conversion(reste);
     }
-// Valeur trop grande---------------------------------------------------------------------------------------------------
+// Entree trop grande (erreur)
 
     else {
         throw "Une valeur d'argument trop grande est arrivee dans la fonction Conversion()";
@@ -147,7 +140,7 @@ string conversion(long long montant) {
 
 // ---------------------------------------------------------------------------------------------------------------------
 string montantEnToutesLettres(long double montant) {
-    // Séparation de la partie entière et décimal du montant
+    // Separation de la partie entiere, decimal du montant (gestion des decimals)
     long int intergerPart = static_cast<long int> (montant);
     long int valeurMil = static_cast<int>(montant * 1000);
     long int troisiemeDecimale = valeurMil % 10;
@@ -173,7 +166,7 @@ string montantEnToutesLettres(long double montant) {
             decimalPart = (valeurMil / 10) % 100;
         }
     }
-    //long reste_montant = (montant - entier_montant) * 100;
+    // Gestion des cas particuliers
     if (montant < 0) {
         return "erreur : montant negatif";
     }
@@ -183,6 +176,7 @@ string montantEnToutesLettres(long double montant) {
     if (intergerPart == 0 && decimalPart == 0) {
         return "zero franc";
     }
+    // Construction de la reponse finale
     string resultat;
     if (intergerPart != 0) {
         resultat += conversion(intergerPart) + (intergerPart > 1 ? " francs" : " franc");
