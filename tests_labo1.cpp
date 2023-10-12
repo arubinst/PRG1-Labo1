@@ -40,9 +40,9 @@ array testValues { make_pair(0.00,"zero franc"s) ,
                    make_pair(9876543210987654.00,"erreur : montant trop grand"s) };
 
 TEST_CASE( "Tests fournis aux etudiants", "TestValues") {
-   for(auto& p : testValues) {
-      SECTION(to_string(p.first) + " == " + p.second) {
-         REQUIRE(montantEnToutesLettres(p.first) == p.second);
-      }
-   }
+    for(auto& p : testValues) {
+        SECTION(to_string(p.first) + " == " + p.second) {
+            REQUIRE(montantEnToutesLettres(p.first) == p.second);
+        }
+    }
 }
