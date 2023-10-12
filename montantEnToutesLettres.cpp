@@ -3,15 +3,6 @@
 
 using namespace std;
 
-string checkPlurial(string sentence) {
-    const string search = "cents";
-    const string replace = "cent";
-    if (sentence.find(search) != string::npos) {
-        return sentence.replace(sentence.find(search), search.length(), replace);
-    }
-    return sentence;
-}
-
 string conversion_valeur(int number) {
     switch (number) {
         case 0:
@@ -104,6 +95,8 @@ string conversion(long long montant) {
     else if (montant < 1000000) {
         int millier = montant / 1000;
         int reste = montant % 1000;
+        const string search = "cents";
+        const string replace = "cent";
         if (millier == 1) {
             if (reste == 0) {
                 return "mille";
@@ -111,9 +104,14 @@ string conversion(long long montant) {
             return "mille-" + conversion(reste);
         }
         if (reste == 0) {
-            return conversion(millier) + "-mille";
+            return conversion(millier) + "-milles";
         }
-        return checkPlurial(conversion(millier) + "-mille-" + conversion(reste));
+        if (conversion(millier).find(search) != string::npos) {
+            return conversion(millier) =
+                           conversion(millier).replace(conversion(millier).find(search), search.length(), replace) +
+                           "-mille-" + conversion(reste);
+        }
+        return conversion(millier) + "-mille-" + conversion(reste);
     }
 // Million--------------------------------------------------------------------------------------------------------------
     else if (montant < 1000000000) {
@@ -123,13 +121,10 @@ string conversion(long long montant) {
         if (million == 1 && reste == 0) {
             return "un-million de ";
         }
-        if (million == 1) {
-            return "un-million-" + conversion(reste);
-        }
         if (reste == 0) {
             return conversion(million) + "-millions" + " de";
         }
-        return checkPlurial(conversion(million) + "-millions-" + conversion(reste));
+        return conversion(million) + "-millions-" + conversion(reste);
     }
 // Milliard-------------------------------------------------------------------------------------------------------------
     else if (montant < 1000000000000) {
@@ -138,13 +133,10 @@ string conversion(long long montant) {
         if (milliard == 1 && reste == 0) {
             return "un-milliard";
         }
-        if (milliard == 1) {
-            return "un-milliard-" + conversion(reste);
-        }
         if (reste == 0) {
             return conversion(milliard) + "-milliards";
         }
-        return checkPlurial(conversion(milliard) + "-milliards-" + conversion(reste));
+        return conversion(milliard) + "-milliards-" + conversion(reste);
     }
 // Valeur trop grande---------------------------------------------------------------------------------------------------
 
